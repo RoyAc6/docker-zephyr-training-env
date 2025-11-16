@@ -1,42 +1,51 @@
 #!/bin/bash
 
-# Kill stale VNC sessions
+# Clean up stale locks
 vncserver -kill $DISPLAY 2>/dev/null || true
 rm -rf /tmp/.X1-lock /tmp/.X11-unix/X1
 
-# Auto-restarting VNC loop
-(
-  while true; do
-      echo "Starting VNC server on $DISPLAY with resolution $RESOLUTION"
-      vncserver $DISPLAY -geometry $RESOLUTION -depth 24 -localhost no -SecurityTypes VncAuth
-      echo "VNC server exited. Restarting in 2s..."
-      sleep 2
-  done
-) &
+echo "Starting VNC server on $DISPLAY with resolution $RESOLUTION"
+vncserver $DISPLAY -geometry $RESOLUTION -depth 24 -localhost no -SecurityTypes VncAuth
 
-# Give session a bit of time before applying settings
-sleep 5
+# Allow VNC/XFCE to initialize
+sleep 3
 
-# Force wallpaper
-DISPLAY=$DISPLAY xfconf-query -c xfce4-desktop \
+# Apply wallpaper (ignore errors)
+xfconf-query -c xfce4-desktop \
   -p /backdrop/screen0/monitorVirtual-1/workspace0/last-image \
   -s /usr/share/backgrounds/xfce/ac6-onlinepc-wallpaper.jpg || true
 
-DISPLAY=$DISPLAY xfconf-query -c xfce4-desktop \
+xfconf-query -c xfce4-desktop \
   -p /backdrop/screen0/monitorVirtual-1/workspace0/image-style \
   -s 5 || true
 
-# Disable screen blanking
-DISPLAY=$DISPLAY xset s off || true
-DISPLAY=$DISPLAY xset -dpms || true
-DISPLAY=$DISPLAY xset s noblank || true
+# Disable blanking
+xset s off || true
+xset -dpms || true
+xset s noblank || true
 
-# Kill old websockify if any
-pkill -f websockify || true
+# Kill old websockify
+pkill -f websockify 2>/dev/null || true
 
-# Start noVNC
+echo "Starting noVNC on port $NO_VNC_PORT..."
 websockify --web=/usr/share/novnc/ $NO_VNC_PORT localhost:$VNC_PORT &
 
-# Keep container alive
-tail -F /home/$USERNAME/.vnc/*.log
+echo "=============================================================="
+echo "   AC6 OnlinePC Container Started "
+echo "=============================================================="
+echo ""
+echo "Open noVNC in your browser at:"
+echo "  http://localhost:8080"
+echo ""
+echo "Login credentials:"
+echo "  Username: ${USERNAME}"
+echo "  Password: ${PASSWORD}"
+echo ""
+echo "VNC Server running on:"
+echo "  Display: ${DISPLAY}"
+echo "  Port: ${VNC_PORT}"
+echo "=============================================================="
+echo ""
 
+# Follow VNC log to keep container alive
+tail -F /home/$USERNAME/.vnc/*.log
