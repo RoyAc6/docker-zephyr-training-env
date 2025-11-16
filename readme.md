@@ -1,4 +1,4 @@
-# AC6 Online PC – Docker Environment
+# Online PC – Docker Environment
 
 This repository provides a Dockerized Ubuntu 22.04 desktop environment for VS Code, Workbench for Zephyr + Zazu Simulator extensions and Percepio View.
 
