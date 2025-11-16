@@ -11,7 +11,7 @@ This repository provides a Dockerized Ubuntu 22.04 desktop environment for VS Co
 
 ## Build
 
-`docker build -t ac6-onlinepc`
+`docker build -t ac6-onlinepc .`
 
 Optional build arguments:
 
@@ -25,13 +25,13 @@ Optional build arguments:
 
 Example with overrides:
 
-`docker build --build-arg USERNAME=john --build-arg PASSWORD=secret -t ac6-onlinepc`
+`docker build --build-arg USERNAME=john --build-arg PASSWORD=secret -t ac6-onlinepc .`
 
 ## Run
 
 ### noVNC only
 
-`docker run -d -p 8080:8080 --name ac6 ac6-onlinepc`
+`docker run -d -p 8080:8080 --name ac6 ac6-onlinepc .`
 
 Open in browser:
 `http://localhost:8080`
