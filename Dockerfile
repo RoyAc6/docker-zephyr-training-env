@@ -105,11 +105,12 @@ RUN wget https://download.tracealyzer.io/PercepioViewForZephyr-4.10.3-linux-stan
 # ---------- VS Code extensions ----------
 USER ${USERNAME}
 ENV VSCODE_CLI="/usr/bin/code" \
-    VSCODE_EXTENSIONS_DIR="/home/${USERNAME}/.vscode/extensions"
+    VSCODE_EXTENSIONS_DIR="/home/${USERNAME}/.vscode/extensions" \
+	DONT_PROMPT_WSL_INSTALL=1
 
 RUN ${VSCODE_CLI} --install-extension Ac6.zephyr-workbench && \
     ${VSCODE_CLI} --install-extension Ac6.zazu-simulator && \
-    /bin/bash ${VSCODE_EXTENSIONS_DIR}/ac6.zephyr-workbench-*/scripts/hosttools/install.sh --skip-sdk --only-without-root /home/${USERNAME} && \
+    /bin/bash ${VSCODE_EXTENSIONS_DIR}/ac6.zephyr-workbench-*/scripts/hosttools/install.sh /home/${USERNAME} && \
     /bin/bash ${VSCODE_EXTENSIONS_DIR}/ac6.zazu-*/scripts/zazuDependenciesInstaller.sh /home/${USERNAME}/.ac6-zazu
 
 # ---------- Final setup ----------
